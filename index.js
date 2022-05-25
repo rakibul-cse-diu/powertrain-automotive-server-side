@@ -9,6 +9,21 @@ require('dotenv').config();
 app.use(cors());
 app.use(express.json());
 
+function verifyJwt(req, res, next) {
+    const auth = req.headers.authorization;
+    if (!auth) {
+        return res.status(401).send({ message: 'Unauthorized Access' })
+    }
+    const token = auth.split(' ')[1];
+    jwt.verify(token, process.env.SEC_KEY, (err, decoded) => {
+        if (err) {
+            return res.status(403).send({ message: 'Access Forbidden' })
+        }
+        req.decoded = decoded;
+        next();
+    })
+}
+
 const uri = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@node-mongo-server-1.pkxfn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 async function run() {
