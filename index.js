@@ -14,14 +14,23 @@ async function run() {
     try {
         await client.connect();
         console.log("db connected");
-        const partsCollection = client.db('manufacturer').collection('parts')
+        const partsCollection = client.db('manufacturer').collection('parts');
+        const reviewsCollection = client.db('manufacturer').collection('reviews');
 
-        // get all item from collection 
+        // get all parts item from collection 
         app.get('/parts', async (req, res) => {
             const query = {};
             const cursor = partsCollection.find(query);
             const parts = await cursor.toArray();
             res.send(parts);
+        })
+
+        // get all reviews from collection 
+        app.get('/reviews', async (req, res) => {
+            const query = {};
+            const cursor = reviewsCollection.find(query);
+            const reviews = await cursor.toArray();
+            res.send(reviews);
         })
     }
     finally {
