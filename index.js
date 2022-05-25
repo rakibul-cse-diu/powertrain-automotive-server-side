@@ -14,6 +14,15 @@ async function run() {
     try {
         await client.connect();
         console.log("db connected");
+        const partsCollection = client.db('manufacturer').collection('parts')
+
+        // get all item from collection 
+        app.get('/parts', async (req, res) => {
+            const query = {};
+            const cursor = partsCollection.find(query);
+            const parts = await cursor.toArray();
+            res.send(parts);
+        })
     }
     finally {
 
