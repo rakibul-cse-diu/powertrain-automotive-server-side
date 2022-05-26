@@ -43,6 +43,21 @@ async function run() {
             res.send(parts);
         })
 
+        // update parts info
+        app.put('/updateparts/:id', async (req, res) => {
+            const itemId = req.params.id;
+            const newItem = req.body;
+            const filter = { _id: ObjectId(itemId) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    availableQuantity: newItem.availableQuantity,
+                }
+            };
+            const result = await partsCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        })
+
         // get single parts
         app.get('/purchase/:id', async (req, res) => {
             const id = req.params.id;
