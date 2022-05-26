@@ -94,11 +94,16 @@ async function run() {
             const updatedDoc = {
                 $set: {
                     name: newItem.name,
+                    education: newItem.education,
+                    location: newItem.location,
+                    phoneNumber: newItem.phoneNumber,
+                    linkedIn: newItem.linkedIn
                 }
             };
             const result = await profileCollection.updateOne(filter, updatedDoc, options);
             res.send(result);
         })
+
         // very admin 
         app.get('/admin/:email', async (req, res) => {
             const email = req.params.email;
