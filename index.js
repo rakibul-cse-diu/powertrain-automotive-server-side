@@ -42,6 +42,14 @@ async function run() {
             res.send(parts);
         })
 
+        // get single parts
+        app.get('/purchase/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const part = await partsCollection.findOne(query);
+            res.send(part);
+        })
+
         // get all reviews from collection 
         app.get('/reviews', async (req, res) => {
             const query = {};
