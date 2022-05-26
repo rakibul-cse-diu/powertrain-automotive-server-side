@@ -33,6 +33,7 @@ async function run() {
         const partsCollection = client.db('manufacturer').collection('parts');
         const reviewsCollection = client.db('manufacturer').collection('reviews');
         const profileCollection = client.db('manufacturer').collection('profiles');
+        const orderCollection = client.db('manufacturer').collection('orders');
 
         // get all parts item from collection 
         app.get('/parts', async (req, res) => {
@@ -81,6 +82,13 @@ async function run() {
                 }
             };
             const result = await profileCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        })
+
+        // add order
+        app.post('/placeorder', async (req, res) => {
+            const order = req.body;
+            const result = await orderCollection.insertOne(order);
             res.send(result);
         })
 
