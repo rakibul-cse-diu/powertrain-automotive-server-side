@@ -32,6 +32,7 @@ async function run() {
         console.log("db connected");
         const partsCollection = client.db('manufacturer').collection('parts');
         const reviewsCollection = client.db('manufacturer').collection('reviews');
+        const profileCollection = client.db('manufacturer').collection('profiles');
 
         // get all parts item from collection 
         app.get('/parts', async (req, res) => {
@@ -47,6 +48,32 @@ async function run() {
             const cursor = reviewsCollection.find(query);
             const reviews = await cursor.toArray();
             res.send(reviews);
+        })
+
+        // get profile 
+        app.get('/getprofile', async (req, res) => {
+            const userEmail = req.query.email;
+            const query = {
+                email: userEmail
+            };
+            const profile = await profileCollection.findOne(query);
+            res.send(profile);
+            console.log(profile)
+        })
+
+        // update or insert profile 
+        app.put('/updateprofile/:email', async (req, res) => {
+            const userEmail = req.params.email;
+            const newItem = req.body;
+            const filter = { email: userEmail };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    name: newItem.name,
+                }
+            };
+            const result = await profileCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
         })
 
         // Auth JWT 
