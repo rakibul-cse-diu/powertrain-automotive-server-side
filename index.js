@@ -99,6 +99,14 @@ async function run() {
             const result = await profileCollection.updateOne(filter, updatedDoc, options);
             res.send(result);
         })
+        // very admin 
+        app.get('/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const profile = await profileCollection.findOne(query);
+            const isAdmin = profile.role === 'admin';
+            res.send({ admin: isAdmin })
+        })
 
         // add order
         app.post('/placeorder', async (req, res) => {
