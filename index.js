@@ -102,6 +102,13 @@ async function run() {
             res.send(reviews);
         })
 
+        // insert review
+        app.post('/reviews', verifyJwt, async (req, res) => {
+            const review = req.body;
+            const result = await reviewsCollection.insertOne(review);
+            res.send(result);
+        });
+
         // get specific profile 
         app.get('/getprofile', async (req, res) => {
             const userEmail = req.query.email;
