@@ -82,7 +82,6 @@ async function run() {
             };
             const profile = await profileCollection.findOne(query);
             res.send(profile);
-            console.log(profile)
         })
 
         // update or insert profile 
@@ -94,10 +93,10 @@ async function run() {
             const updatedDoc = {
                 $set: {
                     name: newItem.name,
+                    mobile: newItem.mobile,
                     education: newItem.education,
-                    location: newItem.location,
-                    phoneNumber: newItem.phoneNumber,
-                    linkedIn: newItem.linkedIn
+                    address: newItem.address,
+                    linkedin: newItem.linkedin
                 }
             };
             const result = await profileCollection.updateOne(filter, updatedDoc, options);
