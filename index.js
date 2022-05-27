@@ -132,7 +132,8 @@ async function run() {
                     mobile: newItem.mobile,
                     education: newItem.education,
                     address: newItem.address,
-                    linkedin: newItem.linkedin
+                    linkedin: newItem.linkedin,
+                    photoURL: newItem.photoURL
                 }
             };
             const result = await profileCollection.updateOne(filter, updatedDoc, options);
@@ -176,8 +177,19 @@ async function run() {
             res.send(orders);
         })
 
+        // get specific order 
+        app.get('/myorder', verifyJwt, async (req, res) => {
+            const userEmail = req.query.email;
+            const query = {
+                email: userEmail
+            };
+            const cursor = orderCollection.find(query);
+            const orders = await cursor.toArray();
+            res.send(orders);
+        })
+
         // delete order
-        app.delete('/order/:email', verifyJwt, verifyAdmin, async (req, res) => {
+        app.delete('/order/:email', verifyJwt, async (req, res) => {
             const email = req.params.email;
             const filter = { email: email };
             const result = await orderCollection.deleteOne(filter);
