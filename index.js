@@ -56,7 +56,14 @@ async function run() {
             res.send(parts);
         })
 
-        // update parts info
+        // insert parts
+        app.post('/parts', verifyJwt, verifyAdmin, async (req, res) => {
+            const parts = req.body;
+            const result = await partsCollection.insertOne(parts);
+            res.send(result);
+        });
+
+        // update parts quantity info
         app.put('/updateparts/:id', async (req, res) => {
             const itemId = req.params.id;
             const newItem = req.body;
