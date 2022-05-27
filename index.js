@@ -86,6 +86,14 @@ async function run() {
             res.send(part);
         })
 
+        // delete Parts
+        app.delete('/parts/:id', verifyJwt, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await partsCollection.deleteOne(filter);
+            res.send(result);
+        })
+
         // get all reviews from collection 
         app.get('/reviews', async (req, res) => {
             const query = {};
