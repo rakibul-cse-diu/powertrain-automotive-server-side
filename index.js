@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const jwt = require('jsonwebtoken');
+const verify = require('jsonwebtoken/verify');
 const port = process.env.PORT || 5000;
 
 const app = express();
@@ -34,6 +35,18 @@ async function run() {
         const reviewsCollection = client.db('manufacturer').collection('reviews');
         const profileCollection = client.db('manufacturer').collection('profiles');
         const orderCollection = client.db('manufacturer').collection('orders');
+
+        // verify admin midleware 
+        const verifyAdmin = async (req, res, next) => {
+            const requester = req.decoded.email;
+            const requesterAccount = await profileCollection.findOne({ email: requester });
+            if (requesterAccount.role === 'admin') {
+                next();
+            }
+            else {
+                res.status(403).send({ message: 'forbidden' });
+            }
+        }
 
         // get all parts item from collection 
         app.get('/parts', async (req, res) => {
@@ -116,6 +129,20 @@ async function run() {
         app.post('/placeorder', async (req, res) => {
             const order = req.body;
             const result = await orderCollection.insertOne(order);
+            res.send(result);
+        })
+
+        // get all orders 
+        app.get('/orders', verifyJwt, verifyAdmin, async (req, res) => {
+            const orders = await orderCollection.find().toArray();
+            res.send(orders);
+        })
+
+        // delete order
+        app.delete('/order/:email', verifyJwt, verifyAdmin, async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const result = await orderCollection.deleteOne(filter);
             res.send(result);
         })
 
