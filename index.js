@@ -102,13 +102,21 @@ async function run() {
             res.send(reviews);
         })
 
-        // get profile 
+        // get specific profile 
         app.get('/getprofile', async (req, res) => {
             const userEmail = req.query.email;
             const query = {
                 email: userEmail
             };
             const profile = await profileCollection.findOne(query);
+            res.send(profile);
+        })
+
+        // get all profile 
+        app.get('/getuser', verifyJwt, verifyAdmin, async (req, res) => {
+            const query = {};
+            const cursor = await profileCollection.find(query);
+            const profile = await cursor.toArray();
             res.send(profile);
         })
 
@@ -125,6 +133,21 @@ async function run() {
                     education: newItem.education,
                     address: newItem.address,
                     linkedin: newItem.linkedin
+                }
+            };
+            const result = await profileCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        })
+
+        // make admin 
+        app.put('/makeadmin/:id', verifyJwt, verifyAdmin, async (req, res) => {
+            const userId = req.params.id;
+            const newItem = req.body;
+            const filter = { _id: ObjectId(userId) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    role: newItem.role,
                 }
             };
             const result = await profileCollection.updateOne(filter, updatedDoc, options);
