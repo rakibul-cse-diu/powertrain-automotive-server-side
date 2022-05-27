@@ -194,6 +194,20 @@ async function run() {
             res.send(order);
         })
 
+        // update status 
+        app.patch('/status/:id', verifyJwt, async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+            const filter = { _id: ObjectId(id) };
+            const updatedDoc = {
+                $set: {
+                    status: status.status
+                }
+            }
+            const updatedOrder = await orderCollection.updateOne(filter, updatedDoc);
+            res.send(updatedOrder);
+        })
+
         // payment intent 
         app.post('/create-payment-intent', verifyJwt, async (req, res) => {
             const service = req.body;
